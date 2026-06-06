@@ -122,8 +122,8 @@
         for (size_t i = 0; i < vm->frames->count; i++) {
             frame_t *frame = vm->frames->data[i];
             for (size_t j = 0; j < frame->references->count; j++) {
-            object_t *obj = frame->references->data[j];
-            obj->is_marked = true;
+                object_t *obj = frame->references->data[j];
+                obj->is_marked = true;
             }
         }
         }
@@ -133,23 +133,23 @@
 
         ```c
         void trace(vm_t *vm) {
-        stack_t *gray_objects = stack_new(8);
-        if (gray_objects == NULL) {
-            return;
-        }
-
-        for (size_t i = 0; i < vm->objects->count; i++) {
-            object_t *obj = vm->objects->data[i];
-            if (obj->is_marked) {
-            stack_push(gray_objects, obj);
+            stack_t *gray_objects = stack_new(8);
+            if (gray_objects == NULL) {
+                return;
             }
-        }
 
-        while (gray_objects->count > 0) {
-            trace_blacken_object(gray_objects, stack_pop(gray_objects));
-        }
+            for (size_t i = 0; i < vm->objects->count; i++) {
+                object_t *obj = vm->objects->data[i];
+                if (obj->is_marked) {
+                    stack_push(gray_objects, obj);
+                }
+            }
 
-        stack_free(gray_objects);
+            while (gray_objects->count > 0) {
+                trace_blacken_object(gray_objects, stack_pop(gray_objects));
+            }
+
+            stack_free(gray_objects);
         }
         ```
 
@@ -157,15 +157,15 @@
 
         ```c
         void sweep(vm_t *vm) {
-        for(size_t i = 0; i < vm->objects->count ; i++){
-            object_t *obj = vm->objects->data[i];
-            if(obj->is_marked) obj->is_marked = false;
-            else {
-            object_free(obj);
-            vm->objects->data[i] = NULL;
+            for(size_t i = 0; i < vm->objects->count ; i++){
+                object_t *obj = vm->objects->data[i];
+                if(obj->is_marked) obj->is_marked = false;
+                else {
+                    object_free(obj);
+                    vm->objects->data[i] = NULL;
+                }
             }
-        }
-        stack_remove_nulls(vm->objects);
+            stack_remove_nulls(vm->objects);
         }
         ```
 
@@ -173,8 +173,8 @@
 
     ```c
     void vm_collect_garbage(vm_t *vm) {
-      mark(vm);
-      trace(vm);
-      sweep(vm);
+        mark(vm);
+        trace(vm);
+        sweep(vm);
     }
     ```
